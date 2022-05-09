@@ -17,11 +17,11 @@ const params = {
 
 
 function SearchBox(props) {
-    const { selectPosition, setSelectPosition } = props;
+    const { selectPosition, setSelectPosition, route, setRoute } = props;
     const [searchText, setSearchText] = useState("");
     const [searchText2, setSearchText2] = useState("");
     const [listPlace, setListPlace] = useState([]);
-    const [route, setRoute] = useState("");
+    //const { route, setRoute } = props;
 
     return (
         <div className="searchbox-container">
@@ -88,14 +88,17 @@ function SearchBox(props) {
                                 method: "GET",
                                 redirect: "follow",
                             };
-                            fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
+                            Promise.all([
+                                fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions),
+                                fetch('http://router.project-osrm.org/route/v1/driving/13.5,15.6;13.5,15.7?geometries=geojson&overview=full')
+                            ])
                                 .then((response) => response.text())
-                                .then((result) => {
+                                .then(([result, coor]) => {
                                     console.log(JSON.parse(result));
                                     setListPlace(JSON.parse(result));
-                                    var r = getRoute([parseFloat(searchText.split(',')[0]),parseFloat(searchText.split(',')[1])],[parseFloat(searchText2.split(',')[0]),parseFloat(searchText2.split(',')[0])]);
-                                    r = r.split("[[")[1].split("]]")[0].split(",");
-                                    setRoute(r);
+                                    //var r = getRoute([parseFloat(searchText.split(',')[0]),parseFloat(searchText.split(',')[1])],[parseFloat(searchText2.split(',')[0]),parseFloat(searchText2.split(',')[0])]);
+                                    coor = coor.split("[[")[1].split("]]")[0].split(",");
+                                    setRoute(coor);
                                 })
                                 .catch((err) => console.log("err: ", err));
                         }

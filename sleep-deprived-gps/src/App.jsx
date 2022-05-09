@@ -39,47 +39,52 @@ function LocationMarker() {
 }
 
 
-// Display route from start to end on map
-function DisplayRoute({map}) {
-    const [route, setRoute] = useState(() => getRoute([42.532493, -71.111371],[42.45834, -71.127736]));
-    // getRoute(position.lat,position.lng)
-    // L.Routing.control({
-    //     waypoints: route,
+// Display route from start to end on map using waypoints
+// TODO: DISPLAY WAYPOINTS AT EACH COORDINATE
+function DisplayRoute(route) {
+
+    // [[lat, lng],[lat, lng]]
+
+    var coor = [[13.5,15.6],[13.5,15.7]];
+    // const [route, setRoute] = useState(() => getRoute([42.532493, -71.111371],[42.45834, -71.127736]));
+    // // getRoute(position.lat,position.lng)
+    // // L.Routing.control({
+    // //     waypoints: route,
+    // //     autoRoute: true,
+    // //     routeWhileDragging: true,
+    // // }).addTo(map);
+
+    // var control = L.Routing.control({
+    //     "type": "LineString",
+    //     waypoints: [
+    //        L.latLng(42.532493, -71.111371),
+    //        L.latLng(42.45834, -71.127736)
+    //     ],
+    //     lineOptions : {
+    //        styles: [
+    //           {color: 'black', opacity: 0.15, weight: 9}, 
+    //           {color: 'white', opacity: 0.8, weight: 6}, 
+    //           {color: 'red', opacity: 1, weight: 2}
+    //        ],
+    //        missingRouteStyles: [
+    //           {color: 'black', opacity: 0.5, weight: 7},
+    //           {color: 'white', opacity: 0.6, weight: 4},
+    //           {color: 'gray', opacity: 0.8, weight: 2, dashArray: '7,12'}
+    //        ]
+    //     },
+     
+    //     show: true,
+    //     addWaypoints: true,
     //     autoRoute: true,
     //     routeWhileDragging: true,
-    // }).addTo(map);
+    //     draggableWaypoints: false,
+    //     useZoomParameter: false,
+    //     showAlternatives: true,
+    //     });
 
-    var control = L.Routing.control({
-        "type": "LineString",
-        waypoints: [
-           L.latLng(42.532493, -71.111371),
-           L.latLng(42.45834, -71.127736)
-        ],
-        lineOptions : {
-           styles: [
-              {color: 'black', opacity: 0.15, weight: 9}, 
-              {color: 'white', opacity: 0.8, weight: 6}, 
-              {color: 'red', opacity: 1, weight: 2}
-           ],
-           missingRouteStyles: [
-              {color: 'black', opacity: 0.5, weight: 7},
-              {color: 'white', opacity: 0.6, weight: 4},
-              {color: 'gray', opacity: 0.8, weight: 2, dashArray: '7,12'}
-           ]
-        },
-     
-        show: true,
-        addWaypoints: true,
-        autoRoute: true,
-        routeWhileDragging: true,
-        draggableWaypoints: false,
-        useZoomParameter: false,
-        showAlternatives: true,
-        });
-
-        return route === null ? null : (
-            <DisplayRoute map={map}/>
-        );
+    //     return route === null ? null : (
+    //         <DisplayRoute map={map}/>
+    //     );
 }
 
 //Displays the latitude and longitude of mouse clicked area
@@ -111,6 +116,7 @@ function App() {
     const [map, setMap] = useState(null);
     const [selectPosition, setSelectPosition] = useState(null);
     const locationSelection = [selectPosition?.lat, selectPosition?.lon];
+    const [route, setRoute] = useState("");
 
     console.log("marker:" + marker);
 
@@ -153,6 +159,7 @@ function App() {
                         </Popup>
                     </Marker>
                 )}
+                {route ? <DisplayRoute route={route} /> : null}
                 <LocationMarker />
             </MapContainer>
         ),
@@ -164,7 +171,7 @@ function App() {
             {displayMap}
             <div className="ui-container">
                 <div style={{ height: "92vh" }} >
-                    <SearchBox selectPosition={selectPosition} setSelectPosition={setSelectPosition} />
+                    <SearchBox selectPosition={selectPosition} setSelectPosition={setSelectPosition} route={route} setRoute={setRoute}/>
                 </div>
                 {map ? <DisplayPosition map={map} /> : null}
             </div>
