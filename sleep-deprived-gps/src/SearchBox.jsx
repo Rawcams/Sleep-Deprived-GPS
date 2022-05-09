@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import L from 'leaflet';
+import { Marker, Popup, useMapEvents } from 'react-leaflet';
 import { TextField } from "@mui/material";
 import { List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Scrollbars } from 'react-custom-scrollbars';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 const params = {
@@ -12,6 +14,25 @@ const params = {
     addressdetails: 'addressdetails',
 };
 
+function LocationMarker() {
+    const [position, setPosition] = useState(null);
+    const map = useMapEvents({
+        click() {
+            map.locate()
+        },
+        locationfound(e) {
+            setPosition(e.latlng)
+        },
+    });
+
+    return position === null ? null : (
+        <Marker position={position}>
+            <Popup>
+                You are here
+            </Popup>
+        </Marker>
+    );
+}
 
 function SearchBox(props) {
     const { selectPosition, setSelectPosition } = props;
@@ -24,11 +45,11 @@ function SearchBox(props) {
             <div style={{ padding: "8px" }}>
                 <TextField
                     style={{ width: "100%" }}
-                    id="outlined-basic"
+                    id="start-location"
                     label="Start Location"
                     variants="outlined"
                     size="small"
-                    color="primary" focused
+                    color="primary"
                     value={searchText}
                     onChange={(e) => {
                         setSearchText(e.target.value);
@@ -61,11 +82,11 @@ function SearchBox(props) {
             <div style={{ padding: "8px" }}>
                 <TextField
                     style={{ width: "100%" }}
-                    id="outlined-basic"
-                    label="End Location"
+                    id="destination"
+                    label="Destination"
                     variants="outlined"
                     size="small"
-                    color="secondary" focused
+                    color="secondary"
                     value={searchText2}
                     onChange={(e) => {
                         setSearchText2(e.target.value);
@@ -95,8 +116,19 @@ function SearchBox(props) {
                     }}
                 />
             </div>
-            <List component="nav" aria-label="main mailbox folders" style={{ height: "76vh", overflow: "hidden" }}>
+            <List component="nav" aria-label="main mailbox folders" style={{ height: "69vh", overflow: "hidden" }}>
                 <Scrollbars autoHide>
+                    <ListItem button onClick={() => {
+                        return (
+                            <LocationMarker />
+                        );
+                    }}>
+                        <ListItemIcon>
+                            <MyLocationIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Current Location" />
+                    </ListItem>
+                    <Divider />
                     {listPlace.map((item) => {
                         return (
                             <div key={item?.osm_id}>

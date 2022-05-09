@@ -10,3 +10,9 @@
     width: 30%;
     background-color: rgb(223, 223, 223);
 }
+
+.logo-container {
+    height: 8vh;
+    text-align: center;
+    font-size: 3em;
+}

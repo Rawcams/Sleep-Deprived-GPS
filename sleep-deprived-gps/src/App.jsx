@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import ModeOfTravelIcon from '@mui/icons-material/ModeOfTravel';
 
 import './App.css'
 import SearchBox from './SearchBox';
@@ -23,10 +24,6 @@ function LocationMarker() {
             map.flyTo(e.latlng, map.getZoom())
         },
     });
-
-    const onClick = useCallback(() => {
-        map.setView(position, zoom)
-    }, [map]);
 
     return position === null ? null : (
         <Marker position={position}>
@@ -96,7 +93,6 @@ function App() {
                         </Popup>
                     </Marker>
                 )}
-                <LocationMarker />
             </MapContainer>
         ),
         [],
@@ -106,7 +102,11 @@ function App() {
         <div className="map-container">
             {displayMap}
             <div className="ui-container">
-                <div style={{ height: "92vh" }} >
+                <div className="logo-container">
+                    <ModeOfTravelIcon fontSize="large" />
+                    EleNa
+                </div>
+                <div style={{ height: "84vh" }} >
                     <SearchBox selectPosition={selectPosition} setSelectPosition={setSelectPosition} />
                 </div>
                 {map ? <DisplayPosition map={map} /> : null}
