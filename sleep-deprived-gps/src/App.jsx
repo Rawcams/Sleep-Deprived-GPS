@@ -44,6 +44,11 @@ function LocationMarker() {
 function DisplayRoute(route) {
 
     // [[lat, lng],[lat, lng]]
+    for (var i = 0; i < route.length(); i++){
+        var lat = parseFloat(route[i][0]);
+        var lng = parseFloat(route[i][1]);
+        var pair = [lat,lng];
+    }
 
     var coor = [[13.5,15.6],[13.5,15.7]];
     // const [route, setRoute] = useState(() => getRoute([42.532493, -71.111371],[42.45834, -71.127736]));

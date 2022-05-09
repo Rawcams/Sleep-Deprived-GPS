@@ -88,16 +88,17 @@ function SearchBox(props) {
                                 method: "GET",
                                 redirect: "follow",
                             };
+                            var url = 'http://router.project-osrm.org/route/v1/driving/'.concat(searchText.toString()).concat(";").concat(searchText2.toString()).concat('?geometries=geojson&overview=full');
                             Promise.all([
                                 fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions),
-                                fetch('http://router.project-osrm.org/route/v1/driving/13.5,15.6;13.5,15.7?geometries=geojson&overview=full')
+                                fetch(url)
                             ])
                                 .then((response) => response.text())
                                 .then(([result, coor]) => {
                                     console.log(JSON.parse(result));
                                     setListPlace(JSON.parse(result));
                                     //var r = getRoute([parseFloat(searchText.split(',')[0]),parseFloat(searchText.split(',')[1])],[parseFloat(searchText2.split(',')[0]),parseFloat(searchText2.split(',')[0])]);
-                                    coor = coor.split("[[")[1].split("]]")[0].split(",");
+                                    coor = coor.split("[[")[1].split("]]")[0].slice(1).slice(0, -1).split("],[");
                                     setRoute(coor);
                                 })
                                 .catch((err) => console.log("err: ", err));
