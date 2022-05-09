@@ -5,6 +5,7 @@ import L from 'leaflet';
 import './App.css'
 import SearchBox from './SearchBox';
 
+import getRoute from './routing/Routing.jsx';
 
 const center = [42.360081, -71.058884];
 const zoom = 13
@@ -37,6 +38,50 @@ function LocationMarker() {
     );
 }
 
+
+// Display route from start to end on map
+function DisplayRoute({map}) {
+    const [route, setRoute] = useState(() => getRoute([42.532493, -71.111371],[42.45834, -71.127736]));
+    // getRoute(position.lat,position.lng)
+    // L.Routing.control({
+    //     waypoints: route,
+    //     autoRoute: true,
+    //     routeWhileDragging: true,
+    // }).addTo(map);
+
+    var control = L.Routing.control({
+        "type": "LineString",
+        waypoints: [
+           L.latLng(42.532493, -71.111371),
+           L.latLng(42.45834, -71.127736)
+        ],
+        lineOptions : {
+           styles: [
+              {color: 'black', opacity: 0.15, weight: 9}, 
+              {color: 'white', opacity: 0.8, weight: 6}, 
+              {color: 'red', opacity: 1, weight: 2}
+           ],
+           missingRouteStyles: [
+              {color: 'black', opacity: 0.5, weight: 7},
+              {color: 'white', opacity: 0.6, weight: 4},
+              {color: 'gray', opacity: 0.8, weight: 2, dashArray: '7,12'}
+           ]
+        },
+     
+        show: true,
+        addWaypoints: true,
+        autoRoute: true,
+        routeWhileDragging: true,
+        draggableWaypoints: false,
+        useZoomParameter: false,
+        showAlternatives: true,
+        });
+
+        return route === null ? null : (
+            <DisplayRoute map={map}/>
+        );
+}
+
 //Displays the latitude and longitude of mouse clicked area
 function DisplayPosition({map}) {
     const [position, setPosition] = useState(() => map.getCenter());
@@ -52,6 +97,7 @@ function DisplayPosition({map}) {
         }
     }, [map, onMove]);
 
+    
     return (
         <p>
             latitude: {position.lat.toFixed(4)}, longitude: {position.lng.toFixed(4)}{' '}
@@ -77,7 +123,17 @@ function App() {
         map.addLayer(marker);
         map.flyTo([selectPosition?.lat, selectPosition?.lon]);
     }
-    
+
+    // L.Routing.control({
+    //     waypoints: [
+    //         L.latLng(42.532493, -71.111371),
+    //         L.latLng(42.4902237, -71.1209)
+    //     ],
+    //     routeWhileDragging: true
+    // }).addTo(map);
+
+    //map.addLayer(DisplayRoute(map));
+    //DisplayRoute(map).addTo(map);
 
     const displayMap = useMemo(
         () => (
@@ -89,6 +145,7 @@ function App() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
+                {map ? <DisplayRoute map={map}/> : null}
                 {selectPosition && (
                     <Marker position={locationSelection}>
                         <Popup>

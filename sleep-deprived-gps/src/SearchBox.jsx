@@ -5,6 +5,9 @@ import { List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/materi
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Scrollbars } from 'react-custom-scrollbars';
 
+//import runCommand from './elena.js'
+import getRoute from './routing/Routing.jsx';
+
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 const params = {
     q: '',
@@ -18,6 +21,7 @@ function SearchBox(props) {
     const [searchText, setSearchText] = useState("");
     const [searchText2, setSearchText2] = useState("");
     const [listPlace, setListPlace] = useState([]);
+    const [route, setRoute] = useState("");
 
     return (
         <div className="searchbox-container">
@@ -89,6 +93,9 @@ function SearchBox(props) {
                                 .then((result) => {
                                     console.log(JSON.parse(result));
                                     setListPlace(JSON.parse(result));
+                                    var r = getRoute([parseFloat(searchText.split(',')[0]),parseFloat(searchText.split(',')[1])],[parseFloat(searchText2.split(',')[0]),parseFloat(searchText2.split(',')[0])]);
+                                    r = r.split("[[")[1].split("]]")[0].split(",");
+                                    setRoute(r);
                                 })
                                 .catch((err) => console.log("err: ", err));
                         }
