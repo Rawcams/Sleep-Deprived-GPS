@@ -29,6 +29,11 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+### 'npm install' or 'npm install install react-scripts --save'
+
+If react-scripts is present, use the first cmd. 
+If react-scripts is not present, use the next cmd with 'react-scripts --save'.
+
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
