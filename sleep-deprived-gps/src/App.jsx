@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { Button } from '@mui/material';
 
 import './App.css'
 import SearchBox from './SearchBox';
+import routeFile from './routing/route.txt'
 
 import getRoute from './routing/Routing.jsx';
 
@@ -41,20 +43,33 @@ function LocationMarker() {
 
 // Display route from start to end on map using waypoints
 // TODO: DISPLAY WAYPOINTS AT EACH COORDINATE
-function DisplayRoute(route, {map}) {
+function DisplayRoute(props) {
+    const { start, setStart, dest, setDest } = props;
+
 
     // [[lat, lng],[lat, lng]]
-    for (var i = 0; i < route.length(); i++){
-        console.log("displaying route")
-        var lat = parseFloat(route[i][0]);
-        var lng = parseFloat(route[i][1]);
-        var pair = [lat,lng];
-        marker = new L.marker([selectPosition?.lat, selectPosition?.lon]);
-        console.log("route marker" + marker)
-        map.addLayer(marker);
-    }
+    return (
+        <Button 
+            variant='outlined'
+            onClick={() => {
+                fetch(routeFile)
+                    .then(r => r.text())
+                    .then((text) => {
+                        console.log(text);
+                        var points = text.replace('[', '').replace('[', '').replace('[', '').replace(']', '').replace(']', '').replace(']', '').split(',');
+                        console.log('points: ', points)
+                        points = points.map(Number);
+                        setStart([points[0], points[1]]);
+                        setDest([points[2], points[3]]);
+                    });
+            }}
+        >
+            Routing
+        </Button>
+    );
+    
 
-    var coor = [[13.5,15.6],[13.5,15.7]];
+    //var coor = [[13.5,15.6],[13.5,15.7]];
     // const [route, setRoute] = useState(() => getRoute([42.532493, -71.111371],[42.45834, -71.127736]));
     // // getRoute(position.lat,position.lng)
     // // L.Routing.control({
@@ -125,7 +140,9 @@ function App() {
     const [map, setMap] = useState(null);
     const [selectPosition, setSelectPosition] = useState(null);
     const locationSelection = [selectPosition?.lat, selectPosition?.lon];
-    const [route, setRoute] = useState("");
+    const [route, setRoute] = useState('');
+    const [start, setStart] = useState([]);
+    const [dest, setDest] = useState([]);
 
     // console.log("marker:" + marker);
 
@@ -150,6 +167,13 @@ function App() {
     //map.addLayer(DisplayRoute(map));
     //DisplayRoute(map).addTo(map);
 
+
+    
+    //const dest = [points[2], points[3]];
+
+    console.log('start: ', start);
+    console.log('dest: ', dest)
+
     const displayMap = useMemo(
         () => (
             <MapContainer 
@@ -160,7 +184,6 @@ function App() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
-                {map ? <DisplayRoute map={map}/> : null}
                 {selectPosition && (
                     <Marker position={locationSelection}>
                         <Popup>
@@ -168,9 +191,21 @@ function App() {
                         </Popup>
                     </Marker>
                 )}
-                {route ? <DisplayRoute route={route} /> : null}
+                {(start.length != 0) && (
+                    <Marker position={start}>
+                        <Popup>
+                            Text
+                        </Popup>
+                    </Marker>
+                )}
+                {(dest.length != 0) && (
+                    <Marker position={dest}>
+                        <Popup>
+                            Text
+                        </Popup>
+                    </Marker>
+                )}
                 <LocationMarker />
-                <DisplayRoute />
             </MapContainer>
         ),
         [],
@@ -182,6 +217,7 @@ function App() {
             <div className="ui-container">
                 <div style={{ height: "92vh" }} >
                     <SearchBox selectPosition={selectPosition} setSelectPosition={setSelectPosition} route={route} setRoute={setRoute}/>
+                    <DisplayRoute start={start} setStart={setStart} dest={dest} setDest={setDest} />
                 </div>
                 {map ? <DisplayPosition map={map} /> : null}
             </div>
