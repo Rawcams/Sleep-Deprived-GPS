@@ -5,6 +5,9 @@ import { List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/materi
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Scrollbars } from 'react-custom-scrollbars';
 
+//import runCommand from './elena.js'
+import getRoute from './routing/Routing.jsx';
+
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 const params = {
     q: '',
@@ -14,10 +17,11 @@ const params = {
 
 
 function SearchBox(props) {
-    const { selectPosition, setSelectPosition } = props;
+    const { selectPosition, setSelectPosition, route, setRoute } = props;
     const [searchText, setSearchText] = useState("");
     const [searchText2, setSearchText2] = useState("");
     const [listPlace, setListPlace] = useState([]);
+    //const { route, setRoute } = props;
 
     return (
         <div className="searchbox-container">
@@ -84,11 +88,18 @@ function SearchBox(props) {
                                 method: "GET",
                                 redirect: "follow",
                             };
-                            fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
+                            var url = 'http://router.project-osrm.org/route/v1/driving/'.concat(searchText.toString()).concat(";").concat(searchText2.toString()).concat('?geometries=geojson&overview=full');
+                            Promise.all([
+                                fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions),
+                                fetch(url)
+                            ])
                                 .then((response) => response.text())
-                                .then((result) => {
+                                .then(([result, coor]) => {
                                     console.log(JSON.parse(result));
                                     setListPlace(JSON.parse(result));
+                                    //var r = getRoute([parseFloat(searchText.split(',')[0]),parseFloat(searchText.split(',')[1])],[parseFloat(searchText2.split(',')[0]),parseFloat(searchText2.split(',')[0])]);
+                                    coor = coor.split("[[")[1].split("]]")[0].slice(1).slice(0, -1).split("],[");
+                                    setRoute(coor);
                                 })
                                 .catch((err) => console.log("err: ", err));
                         }
