@@ -41,13 +41,17 @@ function LocationMarker() {
 
 // Display route from start to end on map using waypoints
 // TODO: DISPLAY WAYPOINTS AT EACH COORDINATE
-function DisplayRoute(route) {
+function DisplayRoute(route, {map}) {
 
     // [[lat, lng],[lat, lng]]
     for (var i = 0; i < route.length(); i++){
+        console.log("displaying route")
         var lat = parseFloat(route[i][0]);
         var lng = parseFloat(route[i][1]);
         var pair = [lat,lng];
+        marker = new L.marker([selectPosition?.lat, selectPosition?.lon]);
+        console.log("route marker" + marker)
+        map.addLayer(marker);
     }
 
     var coor = [[13.5,15.6],[13.5,15.7]];
@@ -123,7 +127,7 @@ function App() {
     const locationSelection = [selectPosition?.lat, selectPosition?.lon];
     const [route, setRoute] = useState("");
 
-    console.log("marker:" + marker);
+    // console.log("marker:" + marker);
 
     if (marker) {
         map.removeLayer(marker);
@@ -166,6 +170,7 @@ function App() {
                 )}
                 {route ? <DisplayRoute route={route} /> : null}
                 <LocationMarker />
+                <DisplayRoute />
             </MapContainer>
         ),
         [],
